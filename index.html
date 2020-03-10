@@ -253,9 +253,11 @@
 			_.each(stores, function(store, idx) {
 				html = html.concat('<tr>');
 				//					html = html.concat('<td>' + (idx + 1) + '</td>');
-				html = html.concat('<td>' + store.name + '</td>');
+				var latlng = store.lat + "," + store.lng;
+				html = html.concat('<td><a href="https://map.kakao.com/?q=' + encodeURI(store.name) + '" target="_blank">' + store.name + '</a></td>');
+				
 				html = html.concat('<td>' + transformStat(store.remain_stat) + '</td>');
-				html = html.concat('<td>' + (store.stock_at || '') + '</td>');
+				html = html.concat('<td>' + (store.stock_at || '-') + '</td>');
 				html = html.concat('</tr>');
 			});
 

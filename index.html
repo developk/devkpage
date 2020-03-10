@@ -1,73 +1,323 @@
 <!DOCTYPE html>
 <html lang="ko">
+	<head>
+		 <!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="Keywords" content="Web, html, blog" />
-  <meta name="Description" content="Web, html, blog 테스트" />
-  <meta name="Date" content="2019-03-28T23:35:21+09:00" />
-  <meta http-equiv="Content-Script-Type" content="text/javascript" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta http-equiv="Title" content="devk's page" />
-  <meta http-equiv="Subject" content="Github Page Testing" />
-  <meta http-equiv="Author" content="Developk" />
-  <meta http-equiv="Reply-To" content="developk@gmail.com" />
-  <meta http-equiv="Email" content="developk@gmail.com" />
-  <meta http-equiv="Filename" content="index.html" />
-  <meta http-equiv="Cache-Control" content="no-cache" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <link rel="stylesheet" href="/assets/css/normalize.min.css" />
-  <link rel="stylesheet" href="/assets/css/style.css" />
-  <title>devk's page index</title>
-</head>
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+		<link rel="stylesheet" href="styles.css"/>
+		<title>공적마스크 약국 판매 현황 - 테이블버전</title>
+	</head>
+	<body>
+		<div class="container-sm">
+			<h5>
+			  공적마스크 약국 판매 현황 도표
+			</h5>
+			
+			<div class="row">
+				<div class="col text-right">
+					<a class="btn btn-sm btn-outline-primary" data-toggle="collapse" href="#collapseInfo" role="button" aria-expanded="false" aria-controls="collapseInfo" style="margin-bottom: 10px;">
+						안내접기
+					</a>
+				</div>
+			</div>
+			
+			<div class="collapse show" id="collapseInfo">
+				<div class="alert alert-warning" role="alert">
+				<h5 class="alert-heading">안내</h5>
+				<small><i class="fas fa-bell"></i> 재고 정보는 5 ~ 10분 정도 차이가 발생합니다.</small>
+				<small><i class="fas fa-bell"></i> 성인용 마스크의 재고만을 대상으로 합니다..</small>
+				<small><i class="fas fa-bell"></i> 정확한 수량이 아닌 단계별 색상으로 안내됩니다.</small>
+				<hr>
+				<p class="mb-0">이 페이지는 개인적인 확인을 위해 개발한것으로 공개할 예정이 없습니다.</p>
+			</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div class="input-group input-group-sm mb-2">
+					  <div class="input-group-prepend">
+						<label class="input-group-text" for="inputGroupSelect01">간격</label>
+					  </div>
+					  <select class="custom-select" id="inputGroupSelect01">
+						<option selected>60초</option>
+						<option value="10">10초</option>
+						<option value="20">20초</option>
+						<option value="30">30초</option>
+					  </select>
+					</div>
+				</div>
+				<div class="col">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="inputGroupSelect02">방식</label>
+						</div>
+						<select class="custom-select" id="inputGroupSelect02">
+							<option value="1">현재좌표중심검색</option>
+							<option value="2" selected>주소검색</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="rowGeo" style="display:none;">
+				<div class="col mb-2">
+					<div class="card">
+						<div class="card-header">검색조건 | 현재좌표중심검색</div>
+						<div class="card-body">
+							<p class="card-text">위도: , 경도: , 반경: </p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="rowAddr">
+				<div class="col mb-2">
+					<div class="card">
+						<div class="card-header">검색조건 | 주소검색</div>
+						<div class="card-body">
+							<p class="card-text">도로명 안됨, 읍, 면, 동까지 입력해야 함.</p>
+							<div class="input-group input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="basic-addon1">주소</span>
+								</div>
+								<input type="text" class="form-control" placeholder="예: 경기도 성남시 분당구 운중동" aria-label="Username" aria-describedby="basic-addon1" id="inputAddr"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="search();" id="btnSearch">검색</button>
+				</div>
+			</div>
+			<div class="table-responsive-sm">
+				<table class="table table-sm table-bordered table-hover">
+				  <caption>선택지역 약국의 마스크재고 도표</caption>
+				  <thead class="thead-dark">
+					<tr>
+<!--					  <th scope="col">#</th>-->
+					  <th scope="col">약국</th>
+					  <th scope="col">재고</th>
+					  <th scope="col">입고시간</th>
+					</tr>
+				  </thead>
+				  <tbody id="tableBody">
+<!--
+					<tr>
+					  <th scope="row">1</th>
+					  <td>Mark</td>
+					  <td>Otto</td>
+					  <td>@mdo</td>
+					</tr>
+					<tr>
+					  <th scope="row">2</th>
+					  <td>Jacob</td>
+					  <td>Thornton</td>
+					  <td>@fat</td>
+					</tr>
+					<tr>
+					  <th scope="row">3</th>
+					  <td>Larry</td>
+					  <td>the Bird</td>
+					  <td>@twitter</td>
+					</tr>
+-->
+				  </tbody>
+				</table>
+			</div>
+			<footer>
+				<section>
+					<h5 class="text-sm-center">재고  구간 단계 설명</h5>
+					<article>
+						<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>
+						<small>100개 이상 (충분)</small>
+					</article>
+					<article>
+						<span class="badge badge-pill badge-warning">100 <i class="fas fa-arrow-alt-circle-down"></i></span>
+						<small>99개 ~ 30개 (보통)</small>
+					</article>
+					<article>
+						<span class="badge badge-pill badge-danger">30 <i class="fas fa-arrow-alt-circle-down"></i></span>
+						<small>29개 ~ 2개 (부족)</small>
+					</article>
+					<article>
+						<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>
+						<small>1개 ~ 0개 (없음 or 판매전)</small>
+					</article>
+				</section>
+			</footer>
+		</div>
+		 <!-- Optional JavaScript -->
+    	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<!-- Place your kit's code here -->
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<script src="https://kit.fontawesome.com/8ac93e7f64.js" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+		<script type="text/javascript">
+			
+			var REFRESH = 60; // 새로고침 간격 60초 기본값
+			var TASK;
+			
+			var API_SERVER = "https://8oi9s0nnth.apigw.ntruss.com/corona19-masks";
+			var API_VERSION = "v1";
+			var API_STORES = "stores/json";
+			var API_SALES = "sales/json";
+			var API_STORE_BY_GEO = "storesByGeo/json";
+			var API_STORE_BY_ADDR = "storesByAddr/json";
+			
+			var DEFAULT_ADDR = "경기도 성남시 분당구 운중동";
+			
+			var DEFAULT_LAT = "37.3919917";
+			var DEFAULT_LNG = "127.0762659";
+			var DEFAULT_M= 1000;
+				
+			$('#collapseInfo').on('hide.bs.collapse', function () {
+				$("[href='#collapseInfo']").text("안내 펼치기");
+			}).on('show.bs.collapse', function () {
+				$("[href='#collapseInfo']").text("안내 접기");
+			});
 
-<body>
-  <h1>Github Page Test Index.html</h1>
-  <div>
-    <h1>테스트 입니다.</h1>
-    <div>
-      <h3>글목록</h3>
-    </div>
-    <div>
-      <table id="table-board">
-        <colgroup>
-          <col style="width:10%" />
-          <col style="width:10%" />
-          <col style="width:10%" />
-          <col style="width:10%" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th>
-              No
-            </th>
-            <th>
-              Title
-            </th>
-            <th>
-              Author
-            </th>
-            <th>
-              Hits
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+			$("#inputGroupSelect02").change(function() {
+				toggleSearchOptions(getType());
+			});
+			
+			function geoErr() {
+				alert('좌표를 가져오는 중 오류가 발생했습니다.');
+			}
+			
+			function checkGeoAPI() {
+				 if (!navigator.geolocation) {
+					alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.\r\n좌표검색이 비활성화 됩니다.");
+					$('#inputGroupSelect02 option:eq(0)').prop("disabled", true);
+				}
+			}
+			
+			function getGEO(callback) {
+				
+				//위치 정보를 얻기
+				var options = {
+					// 가능한 경우, 높은 정확도의 위치(예를 들어, GPS 등) 를 읽어오려면 true로 설정
+					// 그러나 이 기능은 배터리 지속 시간에 영향을 미친다. 
+					enableHighAccuracy: true, // 대략적인 값이라도 상관 없음: 기본값
 
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <h4>페이지 끝</h4>
-      <a href="pages/page01"> 페이지1 이동</a>
-    </div>
-  </div>
-  <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase-database.js"></script>
-  <script type="text/javascript" src="/assets/js/mypage.js"></script>
-</body>
+					// 위치 정보가 충분히 캐시되었으면, 이 프로퍼티를 설정하자, 
+					// 위치 정보를 강제로 재확인하기 위해 사용하기도 하는 이 값의 기본 값은 0이다.
+					maximumAge: 15000,     // 5분이 지나기 전까지는 수정되지 않아도 됨
 
+					// 위치 정보를 받기 위해 얼마나 오랫동안 대기할 것인가?
+					// 기본값은 Infinity이므로 getCurrentPosition()은 무한정 대기한다.
+					timeout: 15000    // 15초 이상 기다리지 않는다.
+				};
+
+				navigator.geolocation.getCurrentPosition(callback, geoErr, options);
+				
+			}
+
+			function getType() {
+				return $("#inputGroupSelect02 option:selected").val();
+			}
+
+			function toggleSearchOptions(typ) {
+				if (typ === "1") {
+					$("#rowGeo").show();
+					$("#rowAddr").hide();
+				} else if (typ === "2")  {
+					$("#rowGeo").hide();
+					$("#rowAddr").show();
+				}
+			}
+
+			function getRefreshMS() {
+				var refSec = parseInt($("#inputGroupSelect01 option:selected").val()) || REFRESH;
+				return refSec * 1000;
+			}
+
+			function getLists(url, searchParams) {
+				$.getJSON(url, searchParams, handleStoresResults);
+			}
+
+			function handleStoresResults(res) {
+				console.log("res: ", res);
+				var address = res.address;
+				var count =  res.count;
+				// 약국만 대상으로 지정
+				var stores = _.filter(res.stores, {'type': '01'});
+				var html = '';
+				_.each(stores, function(store, idx) {
+					html = html.concat('<tr>');
+//					html = html.concat('<td>' + (idx + 1) + '</td>');
+					html = html.concat('<td>' + store.name + '</td>');
+					html = html.concat('<td>' + transformStat(store.remain_stat) + '</td>');
+					html = html.concat('<td>' + (store.stock_at || '') + '</td>');
+					html = html.concat('</tr>');
+				});
+				
+				$("#tableBody").empty().append(html);
+				
+				setTimeout(function() {$("#btnSearch").focusout();}, 100);
+			}
+			
+			function transformStat(remain_stat) {
+				var stat_str = '';
+				if (remain_stat === null || remain_stat === 'empty') {
+					stat_str = '<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+				} else if (remain_stat === 'plenty') {
+					stat_str = '<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>';
+				} else if (remain_stat === 'some') {
+					stat_str = '<span class="badge badge-pill badge-warning">100 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+				} else if (remain_stat === 'few') {
+					stat_str = '<span class="badge badge-pill badge-danger">30 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+				}
+				return stat_str;
+			}
+
+			function registerInterval() {
+
+				if (TASK) {
+					TASK = clearInterval(TASK);
+				}
+
+				TASK = setInterval(search, getRefreshMS());
+			}
+
+			function search() {
+				var type = getType(), 
+					searchParams = {}, 
+					url = API_SERVER.concat("/").concat(API_VERSION);
+
+				if (type === "1") {
+					
+					getGEO(function(pos) {
+						
+						console.log("pos:: ", pos);
+						
+						searchParams.lat = pos.coords.latitude;
+						searchParams.lng = pos.coords.longitude;
+						
+						searchParams.m = 1000;
+						url = url.concat("/").concat(API_STORE_BY_GEO);
+						
+						getLists(url, searchParams);
+					});
+					
+				} else if (type === "2") {
+					searchParams.address = $("#inputAddr").val() || DEFAULT_ADDR;
+					url = url.concat("/").concat(API_STORE_BY_ADDR);
+					
+					getLists(url, searchParams);
+				}
+
+				
+				if (!TASK) {
+					registerInterval();
+				}
+			}
+			
+			checkGeoAPI();
+			
+		</script>
+	</body>
 </html>

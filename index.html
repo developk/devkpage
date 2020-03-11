@@ -8,12 +8,13 @@
 
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="styles.css" />
 	<title>공적마스크 약국 판매 현황 - 테이블버전</title>
 </head>
 
 <body>
-	<div class="container-sm">
+	<div class="container-fluid">
 		<h5>
 			공적마스크 약국 판매 현황 도표
 		</h5>
@@ -68,7 +69,7 @@
 				<div class="card">
 					<div class="card-header">검색조건 | 현재좌표중심검색</div>
 					<div class="card-body">
-						<p class="card-text">위도: , 경도: , 반경: </p>
+						<p class="card-text" id="geoInfo"></p>
 					</div>
 				</div>
 			</div>
@@ -91,11 +92,16 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="search();" id="btnSearch">검색</button>
+				<button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="search();" id="btnSearch">
+					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="icnSpin" style="display:none;"></span> 검색
+				</button>
 			</div>
 		</div>
 		<div class="table-responsive-sm">
-			<table class="table table-sm table-bordered table-hover">
+			<div class="text-right m-2 text-truncate" id="searchAddrInfo" style="display:none;">
+				<p class="text-sm-right font-weight-bolder" id="txtAddrInfo">주소: 경기도 성남시 분당구 운중동</p>
+			</div>
+			<table class="table table-sm table-bordered table-hover" id="stockTable">
 				<caption>선택지역 약국의 마스크재고 도표</caption>
 				<thead class="thead-dark">
 					<tr>
@@ -106,26 +112,6 @@
 					</tr>
 				</thead>
 				<tbody id="tableBody">
-					<!--
-					<tr>
-					  <th scope="row">1</th>
-					  <td>Mark</td>
-					  <td>Otto</td>
-					  <td>@mdo</td>
-					</tr>
-					<tr>
-					  <th scope="row">2</th>
-					  <td>Jacob</td>
-					  <td>Thornton</td>
-					  <td>@fat</td>
-					</tr>
-					<tr>
-					  <th scope="row">3</th>
-					  <td>Larry</td>
-					  <td>the Bird</td>
-					  <td>@twitter</td>
-					</tr>
--->
 				</tbody>
 			</table>
 		</div>
@@ -159,6 +145,7 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	<script src="https://kit.fontawesome.com/8ac93e7f64.js" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
 	<script type="text/javascript">
 		var REFRESH = 60; // 새로고침 간격 60초 기본값
 		var TASK;
@@ -184,6 +171,14 @@
 
 		$("#inputGroupSelect02").change(function() {
 			toggleSearchOptions(getType());
+		});
+
+		$("#inputAddr").keyup(function(e) {
+			if (e.keyCode !== 13) {
+				return false;
+			}
+
+			search();
 		});
 
 		function geoErr() {
@@ -237,31 +232,62 @@
 			return refSec * 1000;
 		}
 
+		function showLoading(el) {
+			$("#" + el).busyLoad("show", {
+				fontawesome: "fa fa-spinner fa-spin fa-3x fa-fw",
+				animation: 'fade'
+			});
+		}
+
+		function hideLoading(el) {
+			$("#" + el).busyLoad("hide", {
+				animation: "fade"
+			});
+		}
+
 		function getLists(url, searchParams) {
+			showLoading("stockTable");
+			$("#icnSpin").show();
 			$.getJSON(url, searchParams, handleStoresResults);
 		}
 
 		function handleStoresResults(res) {
+			hideLoading("stockTable");
+			$("#icnSpin").hide();
 			console.log("res: ", res);
+
 			var address = res.address;
 			var count = res.count;
+
 			// 약국만 대상으로 지정
 			var stores = _.filter(res.stores, {
 				'type': '01'
 			});
+
 			var html = '';
 			_.each(stores, function(store, idx) {
 				html = html.concat('<tr>');
 				//					html = html.concat('<td>' + (idx + 1) + '</td>');
 				var latlng = store.lat + "," + store.lng;
-				html = html.concat('<td><a href="https://map.kakao.com/?q=' + encodeURI(store.name) + '" target="_blank">' + store.name + '</a></td>');
-				
+				html = html.concat('<th scope="row"><a href="https://map.kakao.com/?q=' + encodeURI(store.name) + '" target="_blank">' + store.name + '</a></th>');
+
 				html = html.concat('<td>' + transformStat(store.remain_stat) + '</td>');
 				html = html.concat('<td>' + (store.stock_at || '-') + '</td>');
 				html = html.concat('</tr>');
 			});
 
 			$("#tableBody").empty().append(html);
+
+
+			var addrInfoHtml = '';
+			if (address) {
+				addrInfoHtml += "주소: " + address + '<br/>';
+			}
+			addrInfoHtml += "판패처: " + count + "곳";
+
+			$("#txtAddrInfo").empty().append(addrInfoHtml);
+
+			$("#searchAddrInfo").show();
 
 			setTimeout(function() {
 				$("#btnSearch").focusout();
@@ -270,7 +296,7 @@
 
 		function transformStat(remain_stat) {
 			var stat_str = '';
-			if (remain_stat === null || remain_stat === 'empty') {
+			if (remain_stat === null || remain_stat === 'empty' || remain_stat === undefined) {
 				stat_str = '<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>';
 			} else if (remain_stat === 'plenty') {
 				stat_str = '<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>';
@@ -301,6 +327,7 @@
 				getGEO(function(pos) {
 
 					console.log("pos:: ", pos);
+					$("#geoInfo").empty().html("현위치<br/>위도: " + pos.coords.latitude + "<br/>경도: " + pos.coords.longitude + "<br/>반경: 1km");
 
 					searchParams.lat = pos.coords.latitude;
 					searchParams.lng = pos.coords.longitude;

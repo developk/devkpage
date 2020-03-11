@@ -382,7 +382,11 @@
 				});
 
 			} else if (type === "2") {
-				searchParams.address = $("#inputAddr").val() || DEFAULT_ADDR;
+				searchParams.address = $("#inputAddr").val().trim();
+				if (!searchParams.address || searchParams.address === '') {
+					searchParams.address = DEFAULT_ADDR;
+				}
+					
 				url = url.concat("/").concat(API_STORE_BY_ADDR);
 
 				getLists(url, searchParams);

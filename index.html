@@ -15,26 +15,38 @@
 
 <body>
 	<div class="container-fluid">
-		<h5>
-			공적마스크 약국 판매 현황 도표
-		</h5>
-
 		<div class="row">
-			<div class="col text-right">
-				<a class="btn btn-sm btn-outline-primary" data-toggle="collapse" href="#collapseInfo" role="button" aria-expanded="false" aria-controls="collapseInfo" style="margin-bottom: 10px;">
-					안내접기
-				</a>
+			<div class="col">
+				<h5 class="mt-2">
+					공적마스크 약국 판매 현황 도표
+				</h5>
 			</div>
 		</div>
-
-		<div class="collapse show" id="collapseInfo">
-			<div class="alert alert-warning" role="alert">
-				<h5 class="alert-heading">안내</h5>
-				<p><i class="fas fa-bell"></i> 재고 정보는 5 ~ 10분 정도 차이가 발생합니다.</p>
-				<p><i class="fas fa-bell"></i> 성인용 마스크의 재고만을 대상으로 합니다..</p>
-				<p><i class="fas fa-bell"></i> 정확한 수량이 아닌 단계별 색상으로 안내됩니다.</p>
-				<hr>
-				<p class="mb-0">이 페이지는 개인적인 확인을 위해 개발한것으로 공개할 예정이 없습니다.</p>
+		
+		<div class="row">
+			<div class="col">
+				<div class="row">
+					<div class="col text-right">
+						<a class="btn btn-sm btn-outline-primary" data-toggle="collapse" href="#collapseInfo" role="button" aria-expanded="false" aria-controls="collapseInfo" style="margin-bottom: 10px;">
+							안내접기
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col">
+				<div class="collapse show" id="collapseInfo">
+					<div class="alert alert-warning" role="alert">
+						<h5 class="alert-heading">안내</h5>
+						<p><i class="fas fa-bell"></i> 재고 정보는 5 ~ 10분 정도 차이가 발생합니다.</p>
+						<p><i class="fas fa-bell"></i> 성인용 마스크의 재고만을 대상으로 합니다..</p>
+						<p><i class="fas fa-bell"></i> 정확한 수량이 아닌 단계별 색상으로 안내됩니다.</p>
+						<hr>
+						<p class="mb-0">이 페이지는 개인적인 확인을 위해 개발한것으로 공개할 예정이 없습니다.</p>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -64,6 +76,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="row" id="rowGeo" style="display:none;">
 			<div class="col mb-2">
 				<div class="card">
@@ -74,6 +87,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="row" id="rowAddr">
 			<div class="col mb-2">
 				<div class="card">
@@ -90,6 +104,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="row">
 			<div class="col">
 				<button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="search();" id="btnSearch">
@@ -97,46 +112,57 @@
 				</button>
 			</div>
 		</div>
-		<div class="table-responsive-sm">
-			<div class="text-right m-2 text-truncate" id="searchAddrInfo" style="display:none;">
-				<p class="text-sm-right font-weight-bolder" id="txtAddrInfo">주소: 경기도 성남시 분당구 운중동</p>
+		
+		<div class="row">
+			<div class="col">
+				<div class="table-responsive-sm">
+					<div class="text-right m-2 text-truncate" id="searchAddrInfo" style="display:none;">
+						<p class="text-sm-right font-weight-bolder" id="txtAddrInfo">주소: 경기도 성남시 분당구 운중동</p>
+					</div>
+					<table class="table table-sm table-bordered table-hover" id="stockTable">
+						<caption>선택지역 약국의 마스크재고 도표</caption>
+						<thead class="thead-dark">
+							<tr>
+								<!--					  <th scope="col">#</th>-->
+								<th scope="col">약국</th>
+								<th scope="col">재고</th>
+								<th scope="col">입고시간</th>
+							</tr>
+						</thead>
+						<tbody id="tableBody">
+						</tbody>
+					</table>
+				</div>
 			</div>
-			<table class="table table-sm table-bordered table-hover" id="stockTable">
-				<caption>선택지역 약국의 마스크재고 도표</caption>
-				<thead class="thead-dark">
-					<tr>
-						<!--					  <th scope="col">#</th>-->
-						<th scope="col">약국</th>
-						<th scope="col">재고</th>
-						<th scope="col">입고시간</th>
-					</tr>
-				</thead>
-				<tbody id="tableBody">
-				</tbody>
-			</table>
 		</div>
-		<footer>
-			<section>
-				<h5 class="text-sm-center">재고 구간 단계 설명</h5>
-				<article>
-					<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>
-					<small>100개 이상 (충분)</small>
-				</article>
-				<article>
-					<span class="badge badge-pill badge-warning">100 <i class="fas fa-arrow-alt-circle-down"></i></span>
-					<small>99개 ~ 30개 (보통)</small>
-				</article>
-				<article>
-					<span class="badge badge-pill badge-danger">30 <i class="fas fa-arrow-alt-circle-down"></i></span>
-					<small>29개 ~ 2개 (부족)</small>
-				</article>
-				<article>
-					<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>
-					<small>1개 ~ 0개 (없음 or 판매전)</small>
-				</article>
-			</section>
-		</footer>
+		
+		<div class="row">
+			<div class="col">
+				<footer>
+					<section class="pb-3">
+						<h5 class="text-sm-center">재고 구간 단계 설명</h5>
+						<article>
+							<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>
+							<small>100개 이상 (충분)</small>
+						</article>
+						<article>
+							<span class="badge badge-pill badge-warning">100 <i class="fas fa-arrow-alt-circle-down"></i></span>
+							<small>99개 ~ 30개 (보통)</small>
+						</article>
+						<article>
+							<span class="badge badge-pill badge-danger">30 <i class="fas fa-arrow-alt-circle-down"></i></span>
+							<small>29개 ~ 2개 (부족)</small>
+						</article>
+						<article>
+							<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>
+							<small>1개 ~ 0개 (없음 or 판매전)</small>
+						</article>
+					</section>
+				</footer>
+			</div>
+		</div>
 	</div>
+	
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 	<!-- Place your kit's code here -->
@@ -146,6 +172,7 @@
 	<script src="https://kit.fontawesome.com/8ac93e7f64.js" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
 	<script type="text/javascript">
 		var REFRESH = 60; // 새로고침 간격 60초 기본값
 		var TASK;
@@ -162,6 +189,8 @@
 		var DEFAULT_LAT = "37.3919917";
 		var DEFAULT_LNG = "127.0762659";
 		var DEFAULT_M = 1000;
+		
+		moment.locale('ko');
 
 		$('#collapseInfo').on('hide.bs.collapse', function() {
 			$("[href='#collapseInfo']").text("안내 펼치기");
@@ -179,6 +208,10 @@
 			}
 
 			search();
+		});
+		
+		$(document).on("click", "[href='#']", function(e) {
+			e.preventDefault();
 		});
 
 		function geoErr() {
@@ -269,17 +302,25 @@
 				html = html.concat('<tr>');
 				//					html = html.concat('<td>' + (idx + 1) + '</td>');
 				var latlng = store.lat + "," + store.lng;
-				html = html.concat('<th scope="row"><a href="https://map.kakao.com/?q=' + encodeURI(store.name) + '" target="_blank">' + store.name + '</a></th>');
+				html = html.concat('<th scope="row"><a href="https://map.kakao.com/?q=' + encodeURI(store.addr) + '" target="_blank">' + store.name + '</a></th>');
 
 				html = html.concat('<td>' + transformStat(store.remain_stat) + '</td>');
-				html = html.concat('<td>' + (store.stock_at || '-') + '</td>');
+				
+				var stock_at = store.stock_at || '-';
+				var tf_stock_at = '-';
+				if (stock_at !== '-') {
+					tf_stock_at = moment(stock_at, "YYYY/MM/DD HH:mm:ss").fromNow();
+				}
+				
+				html = html.concat('<td><a tabindex="0" href="#" class="text-decoration-none" role="button" data-toggle="popover" data-trigger="focus" data-content="' + stock_at + '">' + tf_stock_at + '</a></td>');
 				html = html.concat('</tr>');
 			});
 
 			$("#tableBody").empty().append(html);
+			
+			$('[data-toggle="popover"]').popover();
 
-
-			var addrInfoHtml = '';
+			var addrInfoHtml = '검색일: ' + moment().format("LL") + "<br/>";
 			if (address) {
 				addrInfoHtml += "주소: " + address + '<br/>';
 			}
@@ -301,9 +342,9 @@
 			} else if (remain_stat === 'plenty') {
 				stat_str = '<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>';
 			} else if (remain_stat === 'some') {
-				stat_str = '<span class="badge badge-pill badge-warning">100 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+				stat_str = '<span class="badge badge-pill badge-warning">99 <i class="fas fa-arrow-alt-circle-down"></i></span>';
 			} else if (remain_stat === 'few') {
-				stat_str = '<span class="badge badge-pill badge-danger">30 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+				stat_str = '<span class="badge badge-pill badge-danger">29 <i class="fas fa-arrow-alt-circle-down"></i></span>';
 			}
 			return stat_str;
 		}
@@ -321,6 +362,8 @@
 			var type = getType(),
 				searchParams = {},
 				url = API_SERVER.concat("/").concat(API_VERSION);
+			
+			$('[data-toggle="popover"]').popover('dispose');
 
 			if (type === "1") {
 

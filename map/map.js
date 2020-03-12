@@ -32,12 +32,4 @@ function pages(data, textStatus, jqxhr) {
 	initMap();
 }
 
-function mapLoadFail(jqxhr, settings, exception) {
-	console.error('jqxhr: ', jqxhr);
-	console.error('settings: ', settings);
-	console.error('exception: ', exception);
-	
-	alert('지도를 로드할 수 없습니다.');
-}
-
 pages();

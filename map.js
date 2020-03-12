@@ -4,7 +4,8 @@ var MAP_API_KEY = "D9946739-3E1E-3F78-BBEF-16009CEDDAC9";
 var AUTH_DOM = "https://myblog.dogfootk.kro.kr/";
 
 //var API_URL = "http://map.vworld.kr/js/vworldMapInit.js.do?version=2.0&apiKey=" + MAP_API_KEY + "&domain=" + AUTH_DOM;
-var API_URL = "http://map.vworld.kr/js/vworldMapInit.js.do?version=2.0&apiKey=" + MAP_API_KEY;
+var API_URL = "https://map.vworld.kr/js/vworldMapInit.js.do?version=2.0&apiKey=" + MAP_API_KEY;
+//var API_URL = "http://map.vworld.kr/js/vworldMapInit.js.do?version=2.0&apiKey=" + MAP_API_KEY;
 
 var mapController;
 

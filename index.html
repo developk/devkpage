@@ -20,6 +20,7 @@
 				<h5 class="mt-2">
 					공적마스크 약국 판매 현황 도표
 				</h5>
+				<p class="mb-2"><small>이 페이지는 개인적인 확인을 위해 개발한것으로<br/>공개할 예정이 없습니다.</small></p>
 			</div>
 		</div>
 		
@@ -40,11 +41,14 @@
 				<div class="collapse show" id="collapseInfo">
 					<div class="alert alert-warning" role="alert">
 						<h5 class="alert-heading">안내</h5>
-						<p><i class="fas fa-bell"></i> 재고 정보는 5 ~ 10분 정도 차이가 발생합니다.</p>
-						<p><i class="fas fa-bell"></i> 성인용 마스크의 재고만을 대상으로 합니다..</p>
-						<p><i class="fas fa-bell"></i> 정확한 수량이 아닌 단계별 색상으로 안내됩니다.</p>
 						<hr>
-						<p class="mb-0">이 페이지는 개인적인 확인을 위해 개발한것으로 공개할 예정이 없습니다.</p>
+						<article><i class="fas fa-bell fa-xs"></i> <small>재고 정보는 5 ~ 10분 정도 차이가 발생합니다.</small></article>
+						<article><i class="fas fa-bell fa-xs"></i> <small>성인용 마스크의 재고만을 대상으로 합니다.</small></article>
+						<article><i class="fas fa-bell fa-xs"></i> <small>정확한 수량이 아닌 단계별 색상으로 안내됩니다.</small></article>
+						<hr>
+						<article><p>어려운 상황속에서도 헌신해주시는 전국종사자분들께 감사의 말씀을 드립니다.</p></article>
+						<hr>
+						<article><a href="http://blog.naver.com/kfdazzang/221839489769"> <em>식약처 공적마스크 구매 안내</em></a></article>
 					</div>
 				</div>
 			</div>
@@ -155,7 +159,7 @@
 						</article>
 						<article>
 							<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>
-							<small>1개 ~ 0개 (없음 or 판매전)</small>
+							<small>1개 ~ 0개 (퓸절 or 입고대기)</small>
 						</article>
 					</section>
 				</footer>
@@ -287,32 +291,38 @@
 		function handleStoresResults(res) {
 			hideLoading("stockTable");
 			$("#icnSpin").hide();
-			console.log("res: ", res);
+//			console.log("res: ", res);
 
 			var address = res.address;
-			var count = res.count;
 
-			// 약국만 대상으로 지정
-			var stores = _.filter(res.stores, {
-				'type': '01'
-			});
+			var stores = _.chain(res.stores)
+				.filter({'type': '01'}) // 약국만을 대상 우체극(02), 농협(03)
+				.filter(function(obj) { return obj.created_at !== null; }) // 데이터 생성일자가 없는 데이터는 신뢰하지 않음
+				.filter(function(obj) { return (_.has(obj, 'stock_at') && _.has(obj, 'remain_stat')); }) // 필수 프로퍼티 체크
+				.value();
+			
+			var count = stores.length;
+			
+			var toDay = moment().startOf('day');
 
 			var html = '';
+			
 			_.each(stores, function(store, idx) {
 				html = html.concat('<tr>');
 				//					html = html.concat('<td>' + (idx + 1) + '</td>');
-				var latlng = store.lat + "," + store.lng;
+//				var latlng = store.lat + "," + store.lng;
+				
 				html = html.concat('<th scope="row"><a href="https://map.kakao.com/?q=' + encodeURI(store.addr) + '" target="_blank">' + store.name + '</a></th>');
-
-				html = html.concat('<td>' + transformStat(store.remain_stat) + '</td>');
 				
 				var stock_at = store.stock_at || '-';
-				var tf_stock_at = '-';
-				if (stock_at !== '-') {
-					tf_stock_at = moment(stock_at, "YYYY/MM/DD HH:mm:ss").fromNow();
-				}
+				var stockDate = (stock_at !== '-') ? moment(stock_at, "YYYY/MM/DD HH:mm:ss") : null;
+
+				// 같은 날 입고되었다면,
+				var sAt = stockDate !== null ? toDay.isSame(stockDate, 'day') : false;
+
+				html = html.concat('<td>' + transformStat(store.remain_stat, sAt) + '</td>');
 				
-				html = html.concat('<td><a tabindex="0" href="#" class="text-decoration-none" role="button" data-toggle="popover" data-trigger="focus" data-content="' + stock_at + '">' + tf_stock_at + '</a></td>');
+				html = html.concat('<td><a tabindex="0" href="#" class="text-decoration-none" role="button" data-toggle="popover" data-trigger="focus" data-content="' + stock_at + '">' + (stockDate && stockDate.fromNow() || '정보없음') + '</a></td>');
 				html = html.concat('</tr>');
 			});
 
@@ -335,10 +345,14 @@
 			}, 100);
 		}
 
-		function transformStat(remain_stat) {
+		function transformStat(remain_stat, dayDiff) {
 			var stat_str = '';
 			if (remain_stat === null || remain_stat === 'empty' || remain_stat === undefined) {
-				stat_str = '<span class="badge badge-pill badge-secondary">1 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+				if (dayDiff) {
+					stat_str = '<span class="badge badge-pill badge-secondary">품절 <i class="fas fa-arrow-alt-circle-down"></i></span>';	
+				} else {
+					stat_str = '<span class="badge badge-pill badge-secondary">입고대기 <i class="fas fa-arrow-alt-circle-down"></i></span>';	
+				}
 			} else if (remain_stat === 'plenty') {
 				stat_str = '<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>';
 			} else if (remain_stat === 'some') {

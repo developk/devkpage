@@ -40,6 +40,4 @@ function mapLoadFail(jqxhr, settings, exception) {
 	alert('지도를 로드할 수 없습니다.');
 }
 
-$.getScript(API_URL)
-	.done(pages)
-	.fail(mapLoadFail);
+pages();

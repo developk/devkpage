@@ -177,9 +177,9 @@ function transformStat(remain_stat, dayDiff) {
 	var stat_str = '';
 	if (remain_stat === null || remain_stat === 'empty' || remain_stat === undefined) {
 		if (dayDiff) {
-			stat_str = '<span class="badge badge-pill badge-secondary">품절 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+			stat_str = '<span class="badge badge-pill badge-secondary">품절</span>';
 		} else {
-			stat_str = '<span class="badge badge-pill badge-secondary">입고대기 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+			stat_str = '<span class="badge badge-pill badge-secondary">입고대기</span>';
 		}
 	} else if (remain_stat === 'plenty') {
 		stat_str = '<span class="badge badge-pill badge-success">100 <i class="fas fa-arrow-alt-circle-up"></i></span>';
@@ -187,6 +187,8 @@ function transformStat(remain_stat, dayDiff) {
 		stat_str = '<span class="badge badge-pill badge-warning">99 <i class="fas fa-arrow-alt-circle-down"></i></span>';
 	} else if (remain_stat === 'few') {
 		stat_str = '<span class="badge badge-pill badge-danger">29 <i class="fas fa-arrow-alt-circle-down"></i></span>';
+	} else if (remain_stat === 'break') {
+		stat_str = '<span class="badge badge-pill badge-secondary">판매중지</span>';
 	}
 	return stat_str;
 }

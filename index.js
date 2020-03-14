@@ -16,6 +16,58 @@ var DEFAULT_LAT = "37.3919917";
 var DEFAULT_LNG = "127.0762659";
 var DEFAULT_M = 1000;
 
+var STORES_TIME = [
+	{
+		name: '청호약국',
+		start: [
+			{
+				type: "01",
+				time: "19:00"
+			},
+			{
+				type: "02",
+				time: "14:00"
+			}
+		]
+	},
+	{
+		name: '소망약국',
+		start: [
+			{
+				type: "02",
+				time: "14:00"
+			}
+		]
+	},
+	{
+		name: '옵티마우리들약국',
+		start: [
+			{
+				type: "02",
+				time: "14:00"
+			}
+		]
+	},
+	{
+		name: "운중약국",
+		start: [
+			{
+				type: "01",
+				time: "09:00"
+			}
+		]
+	},
+	{
+		name: "이오약국",
+		start: [
+			{
+				type: "02",
+				time: "13:00"
+			}
+		]
+	}
+];
+
 moment.locale('ko');
 
 $('#collapseInfo').on('hide.bs.collapse', function () {
@@ -140,6 +192,17 @@ function handleStoresResults(res) {
 		//					html = html.concat('<td>' + (idx + 1) + '</td>');
 		//				var latlng = store.lat + "," + store.lng;
 
+		var st_time = _.find(STORES_TIME, {name: store.name});
+		// console.log('st_time: ', st_time);
+
+		var norm_start = _.find(st_time.start, {type: '01'}) || '-';
+		var week_start = _.find(st_time.start, {type: '02'}) || '-';
+		// console.log('norm_start: ', norm_start);
+		// console.log('week_start: ', week_start);
+
+		norm_start = norm_start !== "-" &&  norm_start.time || "미확인";
+		week_start = week_start !== "-" && week_start.time || "미확인";
+
 		html = html.concat('<th scope="row"><a href="https://map.kakao.com/?q=' + encodeURI(store.addr) + '" target="_blank">' + store.name + '</a></th>');
 
 		var stock_at = store.stock_at || '-';
@@ -151,6 +214,7 @@ function handleStoresResults(res) {
 		html = html.concat('<td>' + transformStat(store.remain_stat, sAt) + '</td>');
 
 		html = html.concat('<td><a tabindex="0" href="#" class="text-decoration-none" role="button" data-toggle="popover" data-trigger="focus" data-content="' + stock_at + '">' + (stockDate && stockDate.fromNow() || '정보없음') + '</a></td>');
+		html = html.concat('<td>(' + norm_start + ' / ' + week_start + ')</td>');
 		html = html.concat('</tr>');
 	});
 

@@ -192,13 +192,16 @@ function handleStoresResults(res) {
 		//					html = html.concat('<td>' + (idx + 1) + '</td>');
 		//				var latlng = store.lat + "," + store.lng;
 
-		var st_time = _.find(STORES_TIME, {name: store.name});
+		var st_time = _.find(STORES_TIME, {name: store.name}),
+			norm_start = "-", week_start = "-";
 		// console.log('st_time: ', st_time);
 
-		var norm_start = _.find(st_time.start, {type: '01'}) || '-';
-		var week_start = _.find(st_time.start, {type: '02'}) || '-';
-		// console.log('norm_start: ', norm_start);
-		// console.log('week_start: ', week_start);
+		if (st_time) {
+			norm_start = _.find(st_time.start, {type: '01'}) || '-';
+			week_start = _.find(st_time.start, {type: '02'}) || '-';
+			// console.log('norm_start: ', norm_start);
+			// console.log('week_start: ', week_start);
+		}
 
 		norm_start = norm_start !== "-" &&  norm_start.time || "미확인";
 		week_start = week_start !== "-" && week_start.time || "미확인";

@@ -3,10 +3,10 @@
 	background-color: black !important;
 }*/
 .container-fluid table {
-    font-size: 2.2vw;
+    font-size: 16px;
 }
 .container-fluid #searchAddrInfo {
-    font-size: 2.2vw;
+    font-size: 16px;
 }
 .main-container {
     width: 100%;
@@ -29,11 +29,11 @@
 ##Screen = 481px에서 767px 사이
 */
 
-/*@media (min-width: 481px) and (max-width: 767px) {*/
-/*    .container-fluid .table {*/
-/*        font-size: 2vw;*/
-/*    }*/
-/*}*/
+@media (min-width: 481px) and (max-width: 767px) {
+    .container-fluid .table {
+        font-size: 2.5vw;
+    }
+}
 
 /*
 ##Device = Most of the Smartphones Mobiles (Portrait)
@@ -42,8 +42,11 @@
 ##Screen = 320px에서 479px 사이
 */
 
-/*@media (min-width: 320px) and (max-width: 480px) {*/
-/*    .container-fluid {*/
-/*        font-size: 1.5vw;*/
-/*    }*/
-/*}*/
+@media (min-width: 320px) and (max-width: 480px) {
+    .container-fluid table {
+        font-size: 3.5vw;
+    }
+    .container-fluid #searchAddrInfo {
+        font-size: 3.5vw;
+    }
+}

@@ -3,73 +3,6 @@
 var REFRESH = 60; // 새로고침 간격 60초 기본값
 var TASK;
 
-var API_SERVER = "https://8oi9s0nnth.apigw.ntruss.com/corona19-masks";
-var API_VERSION = "v1";
-var API_STORES = "stores/json";
-var API_SALES = "sales/json";
-var API_STORE_BY_GEO = "storesByGeo/json";
-var API_STORE_BY_ADDR = "storesByAddr/json";
-
-var DEFAULT_ADDR = "경기도 성남시 분당구 운중동";
-
-var DEFAULT_LAT = "37.3919917";
-var DEFAULT_LNG = "127.0762659";
-var DEFAULT_M = 1000;
-
-var STORES_TIME = [
-	{
-		name: '청호약국',
-		start: [
-			{
-				type: "01",
-				time: "19:00"
-			},
-			{
-				type: "02",
-				time: "14:00"
-			}
-		]
-	},
-	{
-		name: '소망약국',
-		start: [
-			{
-				type: "02",
-				time: "14:00"
-			}
-		]
-	},
-	{
-		name: '옵티마우리들약국',
-		start: [
-			{
-				type: "02",
-				time: "14:00"
-			}
-		]
-	},
-	{
-		name: "운중약국",
-		start: [
-			{
-				type: "01",
-				time: "09:00"
-			}
-		]
-	},
-	{
-		name: "이오약국",
-		start: [
-			{
-				type: "02",
-				time: "13:00"
-			}
-		]
-	}
-];
-
-moment.locale('ko');
-
 $('#collapseInfo').on('hide.bs.collapse', function () {
 	$("[href='#collapseInfo']").text("안내 펼치기");
 }).on('show.bs.collapse', function () {
@@ -295,7 +228,7 @@ function search() {
 	} else if (type === "2") {
 		searchParams.address = $("#inputAddr").val().trim();
 		if (!searchParams.address || searchParams.address === '') {
-			searchParams.address = DEFAULT_ADDR;
+			searchParams.address = DEFAULT_INPUT_ADDR;
 		}
 
 		url = url.concat("/").concat(API_STORE_BY_ADDR);

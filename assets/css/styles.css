@@ -24,9 +24,12 @@ body {
     left: 0;
     top: 0;
 }
-.input-group-text.fas {
-    padding-top: 0.65rem;
+.bd-masthead .input-group-text {
+    border: 1px solid #343a40 !important;
 }
+/*.input-group-text.fas {*/
+/*    padding-top: 0.65rem;*/
+/*}*/
 
 /*
 ##Device = Low Resolution Tablets, Mobiles (Landscape)

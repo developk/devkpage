@@ -1,6 +1,7 @@
 "use strict";
 
 var vmap, zoom, markerLayer,
+	first = true,
 	DEFAULT_ZOOM_LV = 18;
 
 var SEARCH_TYPE = {
@@ -61,10 +62,20 @@ function initMap() {
 
 			vmap = new vw.ol3.Map("vmap", vw.ol3.MapOptions);
 
-
 			setTimeout("drawLayer()", 200);
+
+			setMoveEvent();
+
 		}, geoErr, options);
 	}
+}
+
+function setMoveEvent() {
+	vmap.on("moveend", function(evt) {
+		// console.log('moveend::: ', evt);
+		removeAllMarker();
+		setTimeout("drawLayer()", 200);
+	});
 }
 
 function move(x,y) {
@@ -85,7 +96,6 @@ function fnMoveZoom() {
 	if (DEFAULT_ZOOM_LV > zoom) {
 		vmap.getView().setZoom(DEFAULT_ZOOM_LV);
 	}
-	setTimeout("drawLayer()", 200);
 }
 
 function drawLayer() {
@@ -168,6 +178,8 @@ function handleSearchResult(res) {
 	// console.log('point: ', point);
 
 	move(point.x * 1, point.y * 1);
+
+	setTimeout("drawLayer()", 200);
 }
 
 function handleSearchPlaceResult(res) {
@@ -188,6 +200,8 @@ function handleSearchPlaceResult(res) {
 	var point = result.items[0].point;
 
 	move(point.x * 1, point.y * 1);
+
+	setTimeout("drawLayer()", 200);
 
 }
 
@@ -227,13 +241,13 @@ function handleStoresResults(res) {
 		}) // 필수 프로퍼티 체크
 		.value();
 
+	if (first) {
+		var mecator_1_pos = ol.proj.transform([stores[0].lng, stores[0].lat], GPS_TYPE.WGS84, GPS_TYPE.Mercator_1);
+		move(mecator_1_pos[0], mecator_1_pos[1]);
+		first = false;
+	}
 
 	if (!markerLayer) {
-
-		var mecator_1_pos = ol.proj.transform([stores[0].lng, stores[0].lat], GPS_TYPE.WGS84, GPS_TYPE.Mercator_1);
-
-		move(mecator_1_pos[0], mecator_1_pos[1]);
-
 		addMarkerLayer();
 	}
 
@@ -243,7 +257,7 @@ function handleStoresResults(res) {
 }
 
 function addMarkerLayer() {
-	if (markerLayer != null) {
+	if (markerLayer) {
 		removeAllMarker();
 		markerLayer = null;
 	}
@@ -265,22 +279,28 @@ function addMarker(store) {
 
 	var statusText = transformStat(store.remain_stat, sAt);
 
+	var toDay = moment().startOf('day'),
+		stock_at = store.stock_at || '-',
+		stockDate = (stock_at !== '-') ? moment(stock_at, "YYYY/MM/DD HH:mm:ss") : null,
+		sAt = stockDate !== null ? toDay.isSame(stockDate, 'day') : false;
+
 	var mOpts = {
 		x: store.lng,
 		y: store.lat,
 		epsg: GPS_TYPE.WGS84,
 		title: store.name,
-		contents: statusText,
+		contents: statusText.concat("<br/>").concat(stockDate && stockDate.format('입고: MM/DD HH:mm:ss') || '확인중'+")"),
 		text: {
 			offsetX: 0.5, //위치설정
 			offsetY: 20,   //위치설정
-			font: '14px Calibri,sans-serif',
-			// fill: {
-			// 	color: '#6c757d'
-			// },
-			// stroke: {
-			// 	color: '#fff', width: 3
-			// },
+			font: '3.4vw Calibri,sans-serif',
+			fill: {
+				color: '#6c757d'
+			},
+			stroke: {
+				color: '#fff',
+				width: 2.5
+			},
 			text: store.name
 		},
 		attr: {
@@ -289,16 +309,40 @@ function addMarker(store) {
 		}
 	};
 
+	if (store.remain_stat === null || store.remain_stat === 'empty' || store.remain_stat === undefined) {
+
+		if (sAt) {
+			mOpts.text.text = mOpts.text.text + '\r\n(품절)';
+		} else {
+			mOpts.text.text = mOpts.text.text + '\r\n(입고대기)';
+		}
+
+	} else if (store.remain_stat === 'plenty') {
+		mOpts.text.text = mOpts.text.text + '\r\n(100+)';
+		mOpts.text.fill.color = '#28a745';
+		// mOpts.text.stroke.color = '#fff';
+	} else if (store.remain_stat === 'some') {
+		mOpts.text.text = mOpts.text.text + '\r\n(99-)';
+		mOpts.text.fill.color = '#ffc107';
+		// mOpts.text.stroke.color = '#fff';
+	} else if (store.remain_stat === 'few') {
+		mOpts.text.text = mOpts.text.text + '\r\n(29-)';
+		mOpts.text.fill.color = '#dc3545';
+		// mOpts.text.stroke.color = '#fff';
+	} else if (store.remain_stat === 'break') {
+		mOpts.text.text = mOpts.text.text + '\r\n(판매중지)';
+	}
+
 	markerLayer.addMarker(mOpts);
 
 }
 
 function removeAllMarker() {
-	if(markerLayer == null){
-		alert("마커레이어가 생성되지 않았습니다.\n마커입력버튼을 먼저 실행하십시요.");
-	} else {
-		this.markerLayer.removeAllMarker();
+	if(!markerLayer){
+		return false;
 	}
+
+	markerLayer.removeAllMarker();
 }
 
 $("#btnSearchMap").click(search);

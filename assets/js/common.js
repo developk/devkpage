@@ -89,6 +89,10 @@ var STORES_TIME = [
         name: "이오약국",
         start: [
             {
+                type: "01",
+                time: "15:00"
+            },
+            {
                 type: "02",
                 time: "13:00"
             }

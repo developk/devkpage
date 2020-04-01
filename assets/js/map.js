@@ -227,6 +227,10 @@ function handleStoresResults(res) {
 	hideLoading("vmap");
 	console.log('res::: ', res);
 
+	if (res.count <= 0) {
+		return false;
+	}
+
 	var address = res.address;
 
 	var stores = _.chain(res.stores)

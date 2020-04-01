@@ -50,13 +50,17 @@ var STORES_TIME = [
             },
             {
                 type: "02",
-                time: "14:00"
+                time: "13:30"
             }
         ]
     },
     {
         name: '소망약국',
         start: [
+            {
+                type: "01",
+                time: "17:00"
+            },
             {
                 type: "02",
                 time: "14:00"
@@ -67,8 +71,12 @@ var STORES_TIME = [
         name: '옵티마우리들약국',
         start: [
             {
+                type: "01",
+                time: "17:00"
+            },
+            {
                 type: "02",
-                time: "14:00"
+                time: "13:30"
             }
         ]
     },

@@ -40,72 +40,10 @@ var GPS_TYPE = {
     "UTM-K": "EPSG:5179"
 };
 
-var STORES_TIME = [
-    {
-        name: '청호약국',
-        start: [
-            {
-                type: "01",
-                time: "19:00"
-            },
-            {
-                type: "02",
-                time: "13:30"
-            }
-        ]
-    },
-    {
-        name: '소망약국',
-        start: [
-            {
-                type: "01",
-                time: "17:00"
-            },
-            {
-                type: "02",
-                time: "14:00"
-            }
-        ]
-    },
-    {
-        name: '옵티마우리들약국',
-        start: [
-            {
-                type: "01",
-                time: "17:00"
-            },
-            {
-                type: "02",
-                time: "13:30"
-            }
-        ]
-    },
-    {
-        name: "운중약국",
-        start: [
-            {
-                type: "01",
-                time: "09:00"
-            },
-            {
-                type: "02",
-                time: "09:00"
-            }
-        ]
-    },
-    {
-        name: "이오약국",
-        start: [
-            {
-                type: "01",
-                time: "15:00"
-            },
-            {
-                type: "02",
-                time: "13:00"
-            }
-        ]
-    }
-];
+var STORES_TIME;
+$.getJSON('assets/js/stores.json', function(res) {
+    // console.log('load stores!::: ', res);
+    STORES_TIME = res;
+});
 
 moment.locale('ko');

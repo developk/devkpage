@@ -288,12 +288,23 @@ function addMarker(store) {
 		stockDate = (stock_at !== '-') ? moment(stock_at, "YYYY/MM/DD HH:mm:ss") : null,
 		sAt = stockDate !== null ? toDay.isSame(stockDate, 'day') : false;
 
+	var st_time = _.find(STORES_TIME, {code: store.code}),
+		norm_start = "-", week_start = "-";
+
+	if (st_time) {
+		norm_start = _.find(st_time.start, {type: '01'}) || '-';
+		week_start = _.find(st_time.start, {type: '02'}) || '-';
+	}
+
+	norm_start = norm_start !== "-" &&  norm_start.time || "미확인";
+	week_start = week_start !== "-" && ("<span class='text-primary'>" + week_start.time + "</span>") || "미확인";
+
 	var mOpts = {
 		x: store.lng,
 		y: store.lat,
 		epsg: GPS_TYPE.WGS84,
 		title: store.name,
-		contents: statusText.concat("<br/>").concat(stockDate && stockDate.format('입고: MM/DD HH:mm:ss') || '확인중'+")"),
+		contents: statusText.concat("<br/>").concat(stockDate && stockDate.format('입고: MM/DD HH:mm:ss') || '확인중'+")").concat("<br/>평일: " + norm_start).concat("<br/><span class='text-primary'>주말: " + week_start + "</span>"),
 		text: {
 			offsetX: 0.5, //위치설정
 			offsetY: 20,   //위치설정
